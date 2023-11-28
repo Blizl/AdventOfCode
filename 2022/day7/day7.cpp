@@ -39,6 +39,7 @@ struct Node {
     }
 
     void addChild(std::unique_ptr<Node> child) {
+        child->parent = this;
         childNodes.insert(std::move(child));
     }
 };
@@ -81,10 +82,12 @@ enum class Command { CHANGE_DIRECTORY, LIST_FILES };
 
 class CommandLine {
    public:
-    unique_ptr<Node> root = make_unique<Node>("/");
+    unique_ptr<Node> root = make_unique<Node>("/", true);
     Node *currentNode;
     vector<string> lines;
     int currentLine = 1;
+    int sumDirectoriesWithMaxSize = 0;
+    unordered_map<string, int> directorySize;
     CommandLine() : currentNode(root.get()) {}
 
     unordered_map<string, Command> stringToCommand = {
@@ -210,6 +213,37 @@ class CommandLine {
             processCommand(lines[currentLine].substr(2,2), lines[currentLine]);
         }
     }
+
+    int findDirectorySize(Node* node) {
+        if (node->isDirectory) {
+            int totalSize = 0;
+            for (const auto &child : node->childNodes) {
+                totalSize += findDirectorySize(child.get());
+            }
+            auto it = directorySize.find(node->name);
+            if (it == directorySize.end()) {
+                directorySize[node->name] = totalSize;
+            }
+            return totalSize;
+        } else {
+            return node->size;
+        }
+
+    }
+
+    int getNumDirectoriesMaxSize(int maxSize, Node* node) {
+        findDirectorySize(node);
+        int totalDirectorySize = 0;
+        for (const auto &pair : directorySize) {
+            string directoryName = pair.first;
+            int size = pair.second;
+            cout << "directory: " << directoryName << "size: " << size  <<endl;
+            if (size <= maxSize) {
+                totalDirectorySize += size;
+            }
+        }
+        return totalDirectorySize;
+    }
 };
 
 int main() {
@@ -221,5 +255,11 @@ int main() {
     }
     CommandLine cmdLine = CommandLine();
     cmdLine.process(lines);
+    printNodes(*cmdLine.root);
+    // Reset the current node to be the root
+    cmdLine.currentNode = cmdLine.root.get();
+    cout << cmdLine.getNumDirectoriesMaxSize(100000, cmdLine.root.get())
+         << endl;
+
     return 0;
 }
