@@ -3,3 +3,5 @@ $ ls
 dir a
 14848514 b.txt
 8504156 c.dat
+$ cd a
+$ ls
