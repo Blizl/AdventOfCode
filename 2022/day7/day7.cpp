@@ -86,7 +86,6 @@ class CommandLine {
     Node *currentNode;
     vector<string> lines;
     int currentLine = 1;
-    int sumDirectoriesWithMaxSize = 0;
     unordered_map<string, int> directorySize;
     CommandLine() : currentNode(root.get()) {}
 
@@ -232,16 +231,22 @@ class CommandLine {
     }
 
     int getNumDirectoriesMaxSize(int maxSize, Node* node) {
-        findDirectorySize(node);
         int totalDirectorySize = 0;
-        for (const auto &pair : directorySize) {
-            string directoryName = pair.first;
-            int size = pair.second;
-            cout << "directory: " << directoryName << "size: " << size  <<endl;
-            if (size <= maxSize) {
-                totalDirectorySize += size;
+
+        if (node->isDirectory) {
+            int dirSize = findDirectorySize(node);
+            if (dirSize <= maxSize) {
+                totalDirectorySize += dirSize;
             }
         }
+
+        for (const auto &child : node->childNodes) {
+            if (child->isDirectory) {
+                totalDirectorySize +=
+                    getNumDirectoriesMaxSize(maxSize, child.get());
+            }
+        }
+
         return totalDirectorySize;
     }
 };
