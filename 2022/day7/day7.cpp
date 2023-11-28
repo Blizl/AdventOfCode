@@ -1,6 +1,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -16,28 +17,23 @@ struct hash<Node> {
 }  // namespace std
 
 struct Node {
-    unordered_set<Node> childNodes;
+    unordered_set<unique_ptr<Node> > childNodes;
     string name;
     int size;
     bool isDirectory = false;
-    // Node(const std::string& nodeName, int nodeSize = 0, bool isDir = false)
-    // : name(nodeName), size(nodeSize), isDirectory(isDir) {}
-    // Node(std::string name, bool isDirectory) : name(name),
-    // isDirectory(isDirectory) {}
     Node(string name) : name(name) {}
     Node(string name, bool isDirectory)
         : name(name), isDirectory(isDirectory) {}
-    // Node(std::string name, int size): name(name), size(size) {}
-    // Node(const std::string& nodeName, int nodeSize, bool isDir, const
-    // std::unordered_set<Node>& children)
-    //     : name(nodeName), size(nodeSize), isDirectory(isDir),
-    //     childNodes(children) {}
 
     bool operator==(const Node &other) const {
         return (name == other.name && size == other.size &&
                 isDirectory == other.isDirectory &&
                 childNodes ==
                     other.childNodes);  // Equality comparison for childNodes
+    }
+
+    void addChild(std::unique_ptr<Node> child) {
+        childNodes.insert(std::move(child));
     }
 };
 namespace std {
@@ -52,31 +48,26 @@ size_t hash<Node>::operator()(const Node &n) const {
 }
 }  // namespace std
 
-// // Overloading the << operator for Node struct
-// std::ostream& operator<<(std::ostream& os, const Node& node) {
-//     os << "Node Name: " << node.name << ", Size: " << node.size << ",
-//     isDirectory: " << node.isDirectory << std::endl;
+void printNodes(const Node &node, int depth = 0) {
+    // Print the current node at the given depth
+    for (int i = 0; i < depth; ++i) {
+        cout << "  ";  // Indentation based on the depth of the node
+    }
+    cout << node.name << endl;
 
-//     // Print child nodes if any
-//     if (!node.childNodes.empty()) {
-//         os << "Child Nodes: {" << std::endl;
-//         for (const auto& child : node.childNodes) {
-//             os << "  " << child; // Recursive call to print child nodes
-//         }
-//         os << "}" << std::endl;
-//     }
-
-//     return os;
-// }
-
-// Node currentNode = Node("/");
-// Node rootNode = currentNode;
+    // Recursively print child nodes
+    for (const auto &child : node.childNodes) {
+        printNodes(
+            *child,
+            depth + 1);  // Recursive call for each child with increased depth
+    }
+}
 
 enum class Command { CHANGE_DIRECTORY, LIST_FILES };
 
 class CommandLine {
    public:
-    Node currentNode;
+    unique_ptr<Node> currentNode = make_unique<Node>("/");
 
     unordered_map<string, Command> stringToCommand = {
         {"ls", Command::LIST_FILES},
@@ -108,11 +99,13 @@ class CommandLine {
         while (getline(inputFile, line) && line[0] != '$') {
             if (isDir(line)) {
                 // If it's a directory, build a directory node
-                currentNode.childNodes.insert(
-                    Node(getDirectoryName(line), true));
+                (*currentNode)
+                    .addChild(
+                        move(make_unique<Node>(getDirectoryName(line), true)));
             } else {
-                currentNode.childNodes.insert(
-                    Node(getFileName(line), getFileSize(line)));
+                (*currentNode)
+                    .addChild(move(make_unique<Node>(getFileName(line),
+                                                     getFileSize(line))));
             }
         }
     }
@@ -122,9 +115,13 @@ class CommandLine {
     }
 
     bool isDirectoryDirectChild(std::string line) {
-        return currentNode.childNodes.find(
-                   Node(getDirectoryName(line), true)) !=
-               currentNode.childNodes.end();
+        string directoryName = getDirectoryName(line);
+        return find_if((*currentNode).childNodes.begin(),
+                       (*currentNode).childNodes.end(),
+                       [directoryName](const auto &nodePtr) {
+                           return nodePtr->name == directoryName &&
+                                  nodePtr->isDirectory;
+                       }) != (*currentNode).childNodes.end();
     }
 
     void processCommand(std::string command, std::ifstream &inputFile,
@@ -135,26 +132,34 @@ class CommandLine {
                 case Command::LIST_FILES:
                     // if it is ls, parse all the lines until the next command
                     buildNodes(inputFile);
+                    printNodes(*currentNode);
                     break;
                 case Command::CHANGE_DIRECTORY:
-                    std::string directory = findDirectoryToChange(line);
+                    string directory = findDirectoryToChange(line);
                     // make sure directory exists
-                    if (isDirectoryDirectChild(directory)) {
-                        // change current node to what it is supposed to be
-                        auto foundNode =
-                            currentNode.childNodes.find(Node(directory, true));
-                        if (foundNode != currentNode.childNodes.end()) {
-                            currentNode = *foundNode;  // Assign the found node
-                                                       // to currentNode
-                        } else {
-                            std::cout << "Directory not found as a child node."
-                                      << std::endl;
-                        }
-                    } else {
-                        std::cout << "Cannot navigate to this directory, not a "
-                                     "direct child"
-                                  << std::endl;
-                    }
+                    // if (isDirectoryDirectChild(directory)) {
+                    //     // change current node to what it is supposed to be
+                    //     auto foundNode =
+                    //         find_if((*currentNode).childNodes.begin(),
+                    //                 (*currentNode).childNodes.end(),
+                    //                 [directory](const auto &nodePtr) {
+                    //                     return nodePtr->name == directory &&
+                    //                            nodePtr->isDirectory;
+                    //                 });
+                    //     if (foundNode != (*currentNode).childNodes.end()) {
+                    //         currentNode.reset(
+                    //             foundNode->get());  // Assign the found node
+                    //     } else {
+                    //         std::cout << "Directory not found as a child
+                    //         node."
+                    //                   << std::endl;
+                    //     }
+                    // } else {
+                    //     std::cout << "Cannot navigate to this directory, not
+                    //     a "
+                    //                  "direct child"
+                    //               << std::endl;
+                    // }
                     break;
             }
         } else {
@@ -163,53 +168,22 @@ class CommandLine {
     }
 };
 
-void printNodes(const Node &node, int depth = 0) {
-    // Print the current node at the given depth
-    for (int i = 0; i < depth; ++i) {
-        cout << "  ";  // Indentation based on the depth of the node
-    }
-    cout << node.name << endl;
-
-    // Recursively print child nodes
-    for (const auto &child : node.childNodes) {
-        printNodes(
-            child,
-            depth + 1);  // Recursive call for each child with increased depth
-    }
-}
-
 int main() {
-    Node rootNode = Node("/");
-    Node child1 = Node("child1");
-    Node child2 = Node("child2");
-    rootNode.childNodes.insert(child1);
-    rootNode.childNodes.insert(child2);
-    // rootNode->childNodes.insert(Node("child1", 10, true));
-    // rootNode->childNodes.insert(Node("child2", 20, false));
-    cout << "hi" << endl;
-    cout << "root node name: " << rootNode.name << endl;
-
-    // Test printNodes function
-    printNodes(rootNode);  // You can use your printNodes function here
-
+    std::ifstream inputFile("input.txt");
+    std::string line;
+    // skip the first line, it will always be cd /
+    std::getline(inputFile, line);
+    CommandLine cmdLine = CommandLine();
+    while (std::getline(inputFile, line)) {
+        // process each terminal output
+        // cd, dir, ls,
+        if (line[0] == '$') {
+            // process command if it is a command
+            cmdLine.processCommand(line.substr(2), inputFile, line);
+        }
+    }
+    // Node rootNode = Node();
+    // rootNode.name = "/";
+    // printNodes(*cmdLine.currentNode);
     return 0;
 }
-
-// int main() {
-//     std::ifstream inputFile("input.txt");
-//     std::string line;
-//     // skip the first line, it will always be cd /
-//     std::getline(inputFile, line);
-//     while (std::getline(inputFile, line)) {
-//         // process each terminal output
-//         // cd, dir, ls,
-//         if (line[0] == '$') {
-//             // process command if it is a command
-//             // processCommand(line.substr(2), inputFile, line);
-//         }
-//     }
-//     // Node rootNode = Node();
-//     // rootNode.name = "/";
-//     // printNodes(rootNode);
-//     return 0;
-// }
