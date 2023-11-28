@@ -19,12 +19,17 @@ struct hash<Node> {
 
 struct Node {
     unordered_set<unique_ptr<Node> > childNodes;
+    Node* parent;
     string name;
     int size;
     bool isDirectory = false;
     Node(string name) : name(name) {}
     Node(string name, bool isDirectory)
         : name(name), isDirectory(isDirectory) {}
+    Node(string name, bool isDirectory, Node* parent)
+        : name(name), isDirectory(isDirectory), parent(parent) {}
+    Node(string name, bool isDirectory, int fileSize, Node *parent)
+        : name(name), isDirectory(isDirectory), size(fileSize), parent(parent) {}
 
     bool operator==(const Node &other) const {
         return (name == other.name && size == other.size &&
@@ -113,11 +118,14 @@ class CommandLine {
                 // If it's a directory, build a directory node
                 (*currentNode)
                     .addChild(
-                        move(make_unique<Node>(getDirectoryName(lines[currentLine]), true)));
+                        move(make_unique<Node>(getDirectoryName(lines[currentLine]), true, currentNode)));
             } else {
                 (*currentNode)
                     .addChild(move(make_unique<Node>(getFileName(lines[currentLine]),
-                                                     getFileSize(lines[currentLine]))));
+                                                    false,
+                                                     getFileSize(lines[currentLine]),
+                                                     currentNode
+                                                     )));
             }
             currentLine++;
         }
@@ -137,9 +145,15 @@ class CommandLine {
                        }) != (*currentNode).childNodes.end();
     }
 
+    void goUpDirectory() { 
+        currentNode = currentNode->parent;
+        cout << "going up a directory, currentNode is now " << currentNode->name << endl;
+    }
+
     void processCommand(std::string command,
                         std::string line) {
-        cout << "processing command " << command << endl;
+        // cout << "processing command " << command << endl;
+        // cout << "processCommand: line is  " << line << endl;
         auto it = stringToCommand.find(command);
         if (it != stringToCommand.end()) {
             switch (stringToCommand[command]) {
@@ -153,6 +167,11 @@ class CommandLine {
                     break;
                 case Command::CHANGE_DIRECTORY:
                     string directory = findDirectoryToChange(line);
+                    if (directory == "..")  {
+                        goUpDirectory();
+                        currentLine++;
+                        break;
+                    } 
                     // make sure directory exists
                     if (isDirectoryDirectChild(directory)) {
                         // change current node to what it is supposed to be
@@ -164,7 +183,8 @@ class CommandLine {
                                                nodePtr->isDirectory;
                                     });
                         if (foundNode != (*currentNode).childNodes.end()) {
-                            cout << "found node, node is " <<  (*foundNode)->name << endl;
+                            // cout << "found node, node is " <<  (*foundNode)->name << endl;
+                            // cout << "found node, node's parent is " <<  (*foundNode)->parent->name << endl;
                             currentNode = foundNode->get();
                         } else {
                             cout << "Directory not found as a child node."
@@ -172,7 +192,7 @@ class CommandLine {
                         }
                     } else {
                         cout << "Cannot navigate to this directory, not a "
-                                     "direct child"
+                                     "direct child,  we are directory " << currentNode->name
                                   << endl;
                     }
                     currentLine++;
@@ -201,8 +221,5 @@ int main() {
     }
     CommandLine cmdLine = CommandLine();
     cmdLine.process(lines);
-    // Node rootNode = Node();
-    // rootNode.name = "/";
-    // printNodes(*cmdLine.currentNode);
     return 0;
 }
