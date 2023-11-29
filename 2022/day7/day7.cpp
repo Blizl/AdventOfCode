@@ -1,4 +1,5 @@
 
+#include <limits.h>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -87,6 +88,8 @@ class CommandLine {
     vector<string> lines;
     int currentLine = 1;
     unordered_map<string, int> directorySize;
+    const int TOTAL_DISK_SPACE = 70000000;
+    const int DISK_SPACE_UPDATE_SIZE = 30000000;
     CommandLine() : currentNode(root.get()) {}
 
     unordered_map<string, Command> stringToCommand = {
@@ -249,6 +252,22 @@ class CommandLine {
 
         return totalDirectorySize;
     }
+    int findDirectoryToDelete() {
+        // Part 2, find the size, not the name of the directory
+        // Unused space = TOTAL_DISK_SPACE - directorySize['/'] 
+        // Need DISK_SPACE_UPDATE_SIZE
+        int spaceNeeded =
+            DISK_SPACE_UPDATE_SIZE - (TOTAL_DISK_SPACE - directorySize["/"]);
+        string res;
+        int resSize = INT_MAX;
+        for (auto pair: directorySize)  {
+            if (pair.second > spaceNeeded && pair.second < resSize) {
+                res = pair.first;
+                resSize = pair.second;
+            }
+        }
+        return resSize;
+    }
 };
 
 int main() {
@@ -264,6 +283,8 @@ int main() {
     // Reset the current node to be the root
     cmdLine.currentNode = cmdLine.root.get();
     cout << cmdLine.getNumDirectoriesMaxSize(100000, cmdLine.root.get())
+         << endl;
+    cout << "directory to delete is: " << cmdLine.findDirectoryToDelete()
          << endl;
 
     return 0;
