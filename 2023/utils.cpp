@@ -11,12 +11,24 @@ void removeAll(std::string& str, char character) {
     str.erase(std::remove(str.begin(), str.end(), character), str.end());
 }
 
-std::string lstrip(const std::string& s) {
-    size_t start = s.find_first_not_of(" ");
-    if (start != std::string::npos) {
-        return s.substr(start);
+void lstrip(std::string& str, const std::string& charsToRemove) {
+    size_t pos = str.find_first_not_of(charsToRemove);
+    if (pos != std::string::npos) {
+        str.erase(0, pos);
+    } else {
+        str.clear();  // If the string contains only whitespace, clear the
+                      // entire string
     }
-    return "";  // Return empty string if there are only spaces
+}
+
+void rstrip(std::string& str, const std::string& charsToRemove) {
+    size_t pos = str.find_last_not_of(charsToRemove);
+    if (pos != std::string::npos) {
+        str.erase(pos + 1);
+    } else {
+        str.clear();  // If the string contains only whitespace, clear the
+                      // entire string
+    }
 }
 
 std::vector<std::string> splitString(const std::string& input, char delimiter) {

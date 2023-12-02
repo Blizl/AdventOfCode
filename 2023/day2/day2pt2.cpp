@@ -26,7 +26,7 @@ int findMinCubesNeeded(vector<string> gameSet) {
     // [[3,4,0], []]
     vector<vector<int>> cubes;
     for (auto game : gameSet) {
-        game = lstrip(game);
+        lstrip(game);
         auto gameSplit = splitString(game, ' ');
         vector<int> cubesVector = gameToVector(gameSplit);
 

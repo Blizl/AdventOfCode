@@ -25,7 +25,7 @@ bool allValid(vector<string> gameSet, vector<int> config) {
     // [[3,4,0], []]
     vector<vector<int>> cubes;
     for (auto game : gameSet) {
-        game = lstrip(game);
+        lstrip(game);
         auto gameSplit = splitString(game, ' ');
         vector<int> cubesVector = gameToVector(gameSplit);
         for (int i = 0; i < config.size(); i++) {

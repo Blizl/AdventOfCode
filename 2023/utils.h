@@ -11,7 +11,8 @@ void removeAll(std::string& str, char character);
 
 std::vector<std::string> splitString(const std::string& input, char delimiter = ' ');
 
-std::string lstrip(const std::string& s);
+void lstrip(std::string& s, const std::string& charsToRemove = " \t\r\n");
+void rstrip(std::string& s, const std::string& charsToRemove = " \t\r\n");
 
 template <typename T>
 void printVector(const std::vector<T>& vec,
