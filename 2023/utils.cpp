@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void removeAllOccurrences(std::string& str, char character) {
+void removeAll(std::string& str, char character) {
     str.erase(std::remove(str.begin(), str.end(), character), str.end());
 }
 

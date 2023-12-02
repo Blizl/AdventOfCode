@@ -7,7 +7,7 @@
 using namespace std;
 
 // Function declarations
-void removeAllOccurrences(std::string& str, char character);
+void removeAll(std::string& str, char character);
 
 std::vector<std::string> splitString(const std::string& input, char delimiter = ' ');
 
