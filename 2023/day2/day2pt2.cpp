@@ -7,38 +7,28 @@
 #include "../utils.h"
 using namespace std;
 
-std::string lstrip(const std::string& s) {
-    size_t start = s.find_first_not_of(" ");
-    if (start != std::string::npos) {
-        return s.substr(start);
-    }
-    return "";  // Return empty string if there are only spaces
-}
-
-
-
-vector<int> gameSetToVector(vector<string> gameSet) {
+vector<int> gameToVector(vector<string> game) {
     vector<int> gameSetVector = {0, 0, 0};
-    for (int i = 0; i < gameSet.size() - 1; i++) {
-        removeAllOccurrences(gameSet[i + 1], ',');
-        if (gameSet[i + 1] == "red") {
-            gameSetVector[0] = stoi(gameSet[i]);
-        } else if (gameSet[i + 1] == "green") {
-            gameSetVector[1] = stoi(gameSet[i]);
-        } else if (gameSet[i + 1] == "blue") {
-            gameSetVector[2] = stoi(gameSet[i]);
+    for (int i = 0; i < game.size() - 1; i++) {
+        removeAll(game[i + 1], ',');
+        if (game[i + 1] == "red") {
+            gameSetVector[0] = stoi(game[i]);
+        } else if (game[i + 1] == "green") {
+            gameSetVector[1] = stoi(game[i]);
+        } else if (game[i + 1] == "blue") {
+            gameSetVector[2] = stoi(game[i]);
         }
     }
 
     return gameSetVector;
 }
-int findMinCubesNeeded(vector<string> tokens) {
+int findMinCubesNeeded(vector<string> gameSet) {
     // [[3,4,0], []]
     vector<vector<int>> cubes;
-    for (auto token : tokens) {
-        token = lstrip(token);
-        auto gameSet = splitString(token, ' ');
-        vector<int> cubesVector = gameSetToVector(gameSet);
+    for (auto game : gameSet) {
+        game = lstrip(game);
+        auto gameSplit = splitString(game, ' ');
+        vector<int> cubesVector = gameToVector(gameSplit);
 
         cout << "cubesVector:  ";
         printVector(cubesVector);
@@ -75,8 +65,8 @@ int main() {
         int id = stoi(line.substr(5, line.find(":") + 1));
         string parsedLine =
             line.substr(line.find(":") + 2, line.length() - line.find(":"));
-        vector<string> tokens = splitString(parsedLine, ';');
-        int cubed = findMinCubesNeeded(tokens);
+        vector<string> gameSet = splitString(parsedLine, ';');
+        int cubed = findMinCubesNeeded(gameSet);
         cout << "cubed is " << cubed << endl;
         currentSum += cubed;
     }
