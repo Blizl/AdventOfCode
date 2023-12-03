@@ -1,9 +1,12 @@
 
 #include "utils.h"
 #include <iostream>
+#include <iterator>
+#include <ranges>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -41,4 +44,15 @@ std::vector<std::string> splitString(const std::string& input, char delimiter) {
     }
 
     return tokens;
+}
+
+std::vector<std::string> readLines(string fileName)  {
+    std::ifstream inputFile(fileName);
+
+    // Use ranges to read lines from the file into the vector of strings
+
+    istream_iterator<std::string> begin(inputFile);
+    istream_iterator<std::string> end;
+
+    return std::vector<std::string>(begin, end);
 }
