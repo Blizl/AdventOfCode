@@ -71,7 +71,7 @@ bool hasSymbolDiagonally(vector<string> lines, int i, int startIndex,
     }
     return topLeft || topRight || bottomLeft || bottomRight;
 }
-bool isAdjToGear(vector<string> lines, int i, int startIndex, int endIndex) {
+bool isAdjToSymbol(vector<string> lines, int i, int startIndex, int endIndex) {
     // is only a part number if horizontally, diagonally, or vertically has
     // a symbol
 
@@ -101,7 +101,7 @@ int main() {
             int endIndex = findEndIndex(lines[i], j);
             int num = stoi(lines[i].substr(j, endIndex - j));
             // cout << "num is " << num << endl;
-            if (isAdjToGear(lines, i, j, endIndex - 1)) {
+            if (isAdjToSymbol(lines, i, j, endIndex - 1)) {
                 cout << "adding " << num << " to current sum" << endl;
                 currentSum += num;
             }
