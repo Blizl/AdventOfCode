@@ -175,6 +175,7 @@ int main() {
                 isAdjToGear(lines, i, j, endIndex - 1);
             if (pair.first) {
                 for (auto& gear : pair.second) {
+                    cout << "num: " << num << ": " << gear << endl;
                     auto it = gearMap.find(gear);
                     if (it != gearMap.end()) {
                         gearMap[gear].push_back(num);

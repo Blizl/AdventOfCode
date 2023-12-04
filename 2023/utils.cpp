@@ -50,9 +50,12 @@ std::vector<std::string> readLines(string fileName)  {
     std::ifstream inputFile(fileName);
 
     // Use ranges to read lines from the file into the vector of strings
+    std::vector<std::string> lines;
+    std::string line;
 
-    istream_iterator<std::string> begin(inputFile);
-    istream_iterator<std::string> end;
+    while (getline(inputFile, line)) {
+        lines.push_back(line);
+    }
 
-    return std::vector<std::string>(begin, end);
+    return lines;
 }

@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
+#include <set>
 using namespace std;
 
 // Function declarations
@@ -24,6 +26,36 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec) {
         os << vec.back();
     }
     os << "]";
+    return os;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const unordered_set<T>& s) {
+    os << "{";
+    auto it = s.begin();
+    if (it != s.end()) {
+        os << *it;
+        ++it;
+        for (; it != s.end(); ++it) {
+            os << ", " << *it;
+        }
+    }
+    os << "}";
+    return os;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const set<T>& s) {
+    os << "{";
+    auto it = s.begin();
+    if (it != s.end()) {
+        os << *it;
+        ++it;
+        for (; it != s.end(); ++it) {
+            os << ", " << *it;
+        }
+    }
+    os << "}";
     return os;
 }
 
