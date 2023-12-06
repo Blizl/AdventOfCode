@@ -19,14 +19,6 @@ bool isSpaceStringOrNonDigit(const std::string& str) {
 int main() {
     int res = 1;
     vector<string> lines = readLines("input.txt");
-    vector<string> times = splitString(lines[0], ' ');
-    vector<string> distances = splitString(lines[1], ' ');
-    times.erase(
-        std::remove_if(times.begin(), times.end(), isSpaceStringOrNonDigit),
-        times.end());
-    distances.erase(std::remove_if(distances.begin(), distances.end(),
-                                   isSpaceStringOrNonDigit),
-                    distances.end());
     vector<int> timesInt = {53, 91, 67, 68};
     vector<int> distancesInt = {250, 1330, 1081, 1025} ;
     vector<unordered_map<int, int> > resList;
