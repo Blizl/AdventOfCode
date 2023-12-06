@@ -59,3 +59,9 @@ std::vector<std::string> readLines(string fileName)  {
 
     return lines;
 }
+
+bool isStrDigit(std::string str) {
+    return !str.empty() &&
+           std::all_of(str.begin(), str.end(),
+                       [](unsigned char c) { return std::isdigit(c); });
+}

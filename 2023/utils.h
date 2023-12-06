@@ -70,4 +70,5 @@ std::ostream& operator<<(std::ostream& os,
 }
 
 vector<std::string> readLines(string file);
+bool isStrDigit(string str);
 #endif  // UTILS_H
