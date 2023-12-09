@@ -14,7 +14,6 @@ int predictNextValue(vector<int> values) {
             currentDiffSum += diff;
             diffs.push_back(diff);
         }
-        cout << "diffs is " << diffs << endl;
         diffList.push_back(diffs);
         if (currentDiffSum == 0) {
             break;
@@ -24,15 +23,13 @@ int predictNextValue(vector<int> values) {
     reverse(diffList.begin(), diffList.end());
     for (int i = 0; i < diffList.size() - 1; i++) {
         vector<int> previousList = diffList[i];
-        int lastElementPrevious = previousList[previousList.size() - 1];
+        int firstElementPrevious = previousList[0];
         vector<int> currentList = diffList[i+1];
-        int lastElementCurrent = currentList[currentList.size() - 1];
-        // cout << "lastelement previous is " << lastElementPrevious << endl;
-        // cout << "lastelement current is " << lastElementCurrent << endl;
-        diffList[i + 1].push_back(lastElementCurrent + lastElementPrevious);
-    }
+        int firstElementCurrent = currentList[0];
+        diffList[i + 1].insert(diffList[i+1].begin(), firstElementCurrent - firstElementPrevious);
+   }
 
-    return diffList[diffList.size() - 1][diffList[diffList.size() - 1].size() -1];
+    return diffList[diffList.size() - 1][0];
 }
 
 int main() {
