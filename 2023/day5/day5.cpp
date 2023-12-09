@@ -43,8 +43,13 @@ int main() {
             while (lines[i+1] != "") {
                 // process to seed soil map
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
-                    seedSoilMap[srcDestRange[1] + j] = srcDestRange[0] + j; 
+                    seedSoilMap[srcDestRange[1] + j] = srcDestRange[0] + j;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]
+                             << " current is: " << j << endl;
+                    }
                 }
 
                 // cout << "current line is " << lines[i + 1] << endl;
@@ -58,9 +63,16 @@ int main() {
                 // process to seed soil map
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
                 // cout << "current line is " << lines[i + 1] << endl;
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
                     soilFertilizerMap[srcDestRange[1] + j] =
                         srcDestRange[0] + j;
+                    // cout << "range is " << srcDestRange[2]
+                    //      << " current is: " << j << endl;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]
+                             << " current is: " << j << endl;
+                    }
                 }
                 i++;
             }
@@ -70,9 +82,16 @@ int main() {
             while (lines[i + 1] != "") {
                 // cout << "current line is " << lines[i + 1] << endl;
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
                     fertilizerWaterMap[srcDestRange[1] + j] =
                         srcDestRange[0] + j;
+                    // cout << "range is " << srcDestRange[2]
+                    //      << " current is: " << j << endl;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]
+                             << " current is: " << j << endl;
+                    }
                 }
                 i++;
             }
@@ -82,9 +101,16 @@ int main() {
             while (lines[i + 1] != "") {
                 // cout << "current line is " << lines[i + 1] << endl;
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
                     waterLightMap[srcDestRange[1] + j] =
                         srcDestRange[0] + j;
+                    // cout << "range is " << srcDestRange[2]
+                    //      << " current is: " << j <<endl;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]
+                             << " current is: " << j << endl;
+                    }
                 }
                 i++;
             }
@@ -94,8 +120,15 @@ int main() {
             while (lines[i + 1] != "") {
                 // cout << "current line is " << lines[i + 1] << endl;
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
                     lightTemperatureMap[srcDestRange[1] + j] = srcDestRange[0] + j;
+                    // cout << "range is " << srcDestRange[2]
+                    //      << " current is: " << j << endl;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]
+                             << " current is: " << j << endl;
+                    }
                 }
                 i++;
             }
@@ -106,9 +139,16 @@ int main() {
                 // process to seed soil map
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
                 // cout << "current line is " << lines[i + 1] << endl;
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
                     temperatureHumidityMap[srcDestRange[1] + j] =
                         srcDestRange[0] + j;
+                    // cout << "range is " << srcDestRange[2]
+                    //      << " current is: " << j << endl;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]
+                             << " current is: " << j << endl;
+                    }
                 }
                 i++;
             }
@@ -119,9 +159,15 @@ int main() {
                 // process to seed soil map
                 // cout << "current line is " << lines[i + 1] << endl;
                 vector<long long> srcDestRange = toSourceDestinationRange(lines[i + 1]);
+                cout << "range is " << srcDestRange[2] << endl;
                 for (long long j = 0; j < srcDestRange[2]; j++) {
                     humidityLocationMap[srcDestRange[1] + j] =
                         srcDestRange[0] + j;
+                    // cout << "range is " << srcDestRange[2]
+                        //  << " current is: " << j << endl;
+                    if (j % 1000000 == 0) {
+                        cout << "range is " << srcDestRange[2]  << " current is: " << j << endl;
+                    }
                 }
                 i++;
             }
