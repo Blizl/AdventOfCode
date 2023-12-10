@@ -3,13 +3,6 @@
 #include <unordered_map>
 #include <queue>
 
-// struct Node {
-//     Node* left;
-//     Node* right;
-//     string value;
-//     Node(Node* left, Node* right, string value)
-//         : left(left), right(right), value(value){}
-// };
 string parseKey(string line) { 
     int spaceIndex = line.find_first_of(' ');
     return line.substr(0, spaceIndex);
@@ -35,10 +28,6 @@ int main() {
             continue;
         }
         string key = parseKey(lines[i]);
-        // if (i == 2) {
-        //     starting = key;
-        // }
-        // cout << "key is " << key << endl;
         pair<string, string> value = parseValue(lines[i]);
         map[key] = value;
     }
@@ -47,7 +36,6 @@ int main() {
 
     queue<char> q;
     string current = starting;
-    cout << "number of instructions is " << instructions.length() << endl;
     for (auto c : instructions) {
         q.push(c);
     }
@@ -62,7 +50,6 @@ int main() {
             current = current_pair.second;
         }
         steps++;
-        cout << "current is " << current << endl;
         if (current == target) {
             break;
         }
